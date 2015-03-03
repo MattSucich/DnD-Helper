@@ -16,7 +16,7 @@ class StartQT4(QtGui.QMainWindow):
     def add_mob(self):
     	item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(0, 5, item)
-        item.setText(_translate("MainWindow", "Paralyzed123sad", None))
+        item.setText(_translate("MainWindow", "Paralyzed", None))
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(0, 4, item)
         item.setText(_translate("MainWindow", "Stunned", None))
