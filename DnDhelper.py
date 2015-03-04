@@ -2,6 +2,7 @@ import sys
 from PyQt4 import QtCore, QtGui
 from MainForm import Ui_MainWindow, _translate
 from monsterDialog import Ui_monsterDialog
+from monster import Monster, Mob
 
 class StartQT4(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -33,8 +34,14 @@ class StartQT4(QtGui.QMainWindow):
         dlg = StartMonsterDialog()
         dlg.__init__()
         if dlg.exec_():
-            value = dlg.getValues()
-            self.ui.mobSelect.addItem(value, None)
+            newMonster = dlg.getValues()
+            monsters.append(newMonster)
+            self.ui.mobSelect.addItem(monsters[len(monsters)-1].name, None)
+            print newMonster.name
+            print newMonster.dicesize
+            print newMonster.dicenum
+            print newMonster.hpmod
+            self.ui.mobInfo.setPlainText(newMonster.desc)
         
 
 class StartMonsterDialog(QtGui.QDialog):
@@ -44,13 +51,17 @@ class StartMonsterDialog(QtGui.QDialog):
         self.ui.setupUi(self)
 
     def getValues(self):
-        return self.ui.lineEdit.text()
+        return Monster(self.ui.nameLine.text(), int(self.ui.numDice.text()), int(self.ui.dieSize.text()), int(self.ui.hitDiceMod.text()), self.ui.descriptionBox.toPlainText())
 
 
 if __name__ == "__main__":
+    monsters = []
+    mobs = []
+
     app = QtGui.QApplication(sys.argv)
     myapp = StartQT4()
     myapp.show()
+
 
     sys.exit(app.exec_())
 

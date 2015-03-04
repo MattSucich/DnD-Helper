@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit"/>
+    <widget class="QLineEdit" name="nameLine"/>
    </item>
    <item>
     <widget class="QLabel" name="label_2">
@@ -80,7 +80,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="plainTextEdit"/>
+    <widget class="QPlainTextEdit" name="descriptionBox"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

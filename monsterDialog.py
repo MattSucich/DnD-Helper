@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'monsterDialog.ui'
 #
-# Created: Tue Mar  3 16:30:45 2015
+# Created: Wed Mar  4 00:45:12 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -32,9 +32,9 @@ class Ui_monsterDialog(object):
         self.label_3 = QtGui.QLabel(monsterDialog)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.verticalLayout.addWidget(self.label_3)
-        self.lineEdit = QtGui.QLineEdit(monsterDialog)
-        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.verticalLayout.addWidget(self.lineEdit)
+        self.nameLine = QtGui.QLineEdit(monsterDialog)
+        self.nameLine.setObjectName(_fromUtf8("nameLine"))
+        self.verticalLayout.addWidget(self.nameLine)
         self.label_2 = QtGui.QLabel(monsterDialog)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.verticalLayout.addWidget(self.label_2)
@@ -61,9 +61,9 @@ class Ui_monsterDialog(object):
         self.label = QtGui.QLabel(monsterDialog)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
-        self.plainTextEdit = QtGui.QPlainTextEdit(monsterDialog)
-        self.plainTextEdit.setObjectName(_fromUtf8("plainTextEdit"))
-        self.verticalLayout.addWidget(self.plainTextEdit)
+        self.descriptionBox = QtGui.QPlainTextEdit(monsterDialog)
+        self.descriptionBox.setObjectName(_fromUtf8("descriptionBox"))
+        self.verticalLayout.addWidget(self.descriptionBox)
         self.buttonBox = QtGui.QDialogButtonBox(monsterDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)

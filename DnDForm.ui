@@ -76,16 +76,6 @@
             <height>16777215</height>
            </size>
           </property>
-          <item>
-           <property name="text">
-            <string>Dragon</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Wererat</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item>
@@ -156,26 +146,6 @@
         <attribute name="verticalHeaderMinimumSectionSize">
          <number>10</number>
         </attribute>
-        <row>
-         <property name="text">
-          <string>Dragon 1</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Dragon 2</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Wererat 1</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Wererat 2</string>
-         </property>
-        </row>
         <column>
          <property name="text">
           <string>Health</string>
@@ -211,24 +181,6 @@
           <string>Status 4</string>
          </property>
         </column>
-        <item row="0" column="0">
-         <property name="text">
-          <string>150</string>
-         </property>
-        </item>
-        <item row="0" column="1">
-         <property name="text">
-          <string>203</string>
-         </property>
-        </item>
-        <item row="0" column="2">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="flags">
-          <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsEnabled</set>
-         </property>
-        </item>
        </widget>
       </item>
       <item>
