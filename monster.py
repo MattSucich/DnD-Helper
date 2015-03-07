@@ -14,9 +14,9 @@ class Monster(object):
 	def addMob(self):
 		self.number += 1
 		a = 0 # rolling health
-		for x in xrange(1,dicenum):
-			a = a + random.randrange(1,dicesize)
-		return Mob(self.name, a+hpmod, self.number)
+		for x in xrange(1,self.dicenum):
+			a = a + random.randrange(1,self.dicesize)
+		return Mob(self.name, a+self.hpmod, self.number)
 
 class Mob(object):
 	"""Mob: instance of Monster in a combat encounter"""

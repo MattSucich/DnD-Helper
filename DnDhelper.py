@@ -10,19 +10,44 @@ class StartQT4(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         QtCore.QObject.connect(self.ui.addMobButton,QtCore.SIGNAL("clicked()"), self.add_mob)
-        QtCore.QObject.connect(self.ui.createMonsterButton,QtCore.SIGNAL("clicked()"), self.show_dialog)
+        QtCore.QObject.connect(self.ui.createMonsterButton,QtCore.SIGNAL("clicked()"), self.add_monster)
         QtCore.QObject.connect(self.ui.effectButton,QtCore.SIGNAL("clicked()"), self.set_effects)
+        QtCore.QObject.connect(self.ui.healButton,QtCore.SIGNAL("clicked()"), self.heal_hp)
+        QtCore.QObject.connect(self.ui.damageButton,QtCore.SIGNAL("clicked()"), self.damage_hp)
         self.ui.encounter.horizontalHeader().setMovable(True)
         self.ui.encounter.horizontalHeader().setResizeMode(3)
         self.ui.encounter.verticalHeader().setMovable(True)
 
     def add_mob(self):
-    	item = QtGui.QTableWidgetItem()
-        self.ui.encounter.setItem(0, 5, item)
-        item.setText(_translate("MainWindow", "Paralyzed", None))
+        currRow = self.ui.encounter.rowCount()
+        self.ui.encounter.insertRow(currRow)
+    	mobs.append(monsters[self.ui.mobSelect.currentIndex()].addMob())
         item = QtGui.QTableWidgetItem()
-        self.ui.encounter.setItem(0, 4, item)
-        item.setText(_translate("MainWindow", "Stunned", None))
+        self.ui.encounter.setItem(currRow, 0, item)
+        item.setText(_translate("MainWindow", str(mobs[-1].health), None))
+        item = QtGui.QTableWidgetItem()
+        self.ui.encounter.setItem(currRow, 1, item)
+        item.setText(_translate("MainWindow", str(mobs[-1].maxHP), None))
+        item = QtGui.QTableWidgetItem()
+        self.ui.encounter.setVerticalHeaderItem(currRow, item)
+        item.setText(_translate("MainWindow", mobs[-1].name, None))
+
+    def heal_hp(self):
+        healnum = self.ui.hitValue.value()
+        row = self.ui.encounter.currentRow()
+        mobs[row].health += healnum
+        item = self.ui.encounter.item(row, 0)
+        item.setText(_translate("MainWindow", str(mobs[row].health), None))
+        self.ui.battleLog.addItem(_translate("MainWindow", "%s healed for %s - %s" % (mobs[row].name, healnum, str(self.ui.hitDescription.text())), None))
+
+    def damage_hp(self):
+        hitnum = self.ui.hitValue.value()
+        row = self.ui.encounter.currentRow()
+        mobs[row].health -= hitnum
+        item = self.ui.encounter.item(row, 0)
+        item.setText(_translate("MainWindow", str(mobs[row].health), None))
+        self.ui.battleLog.addItem(_translate("MainWindow", "%s took %s damage - %s" % (mobs[row].name, hitnum, str(self.ui.hitDescription.text())), None))
+
 
     def set_effects(self):
     	item = self.ui.encounter.item(0, 5)
@@ -30,17 +55,14 @@ class StartQT4(QtGui.QMainWindow):
         item = self.ui.encounter.item(0, 4)
         item.setText(_translate("MainWindow", " ", None))
 
-    def show_dialog(self):
+    def add_monster(self):
         dlg = StartMonsterDialog()
         dlg.__init__()
         if dlg.exec_():
             newMonster = dlg.getValues()
             monsters.append(newMonster)
-            self.ui.mobSelect.addItem(monsters[len(monsters)-1].name, None)
-            print newMonster.name
-            print newMonster.dicesize
-            print newMonster.dicenum
-            print newMonster.hpmod
+            self.ui.mobSelect.addItem(newMonster.name, None)
+            
             self.ui.mobInfo.setPlainText(newMonster.desc)
         
 
