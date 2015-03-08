@@ -5,6 +5,20 @@ from monsterDialog import Ui_monsterDialog
 from monster import Monster, Mob
 
 class StartQT4(QtGui.QMainWindow):
+    statDict = {
+    0   :   " ",
+    1   :   "Blinded",
+    2   :   "Charmed",
+    3   :   "Frightened",
+    4   :   "Grappled",
+    5   :   "Incapacitated",
+    6   :   "Incorporeal",
+    7   :   "Paralyzed",
+    8   :   "Petrified",
+    9   :   "Prone",
+    10  :   "Restrained",
+    11  :   "Stunned"
+    }
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_MainWindow()
@@ -14,6 +28,8 @@ class StartQT4(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.effectButton,QtCore.SIGNAL("clicked()"), self.set_effects)
         QtCore.QObject.connect(self.ui.healButton,QtCore.SIGNAL("clicked()"), self.heal_hp)
         QtCore.QObject.connect(self.ui.damageButton,QtCore.SIGNAL("clicked()"), self.damage_hp)
+        QtCore.QObject.connect(self.ui.encounter, QtCore.SIGNAL("cellClicked(int,int)"), self.get_effects)
+        QtCore.QObject.connect(self.ui.encounter.verticalHeader(), QtCore.SIGNAL("sectionClicked(int)"), self.get_effect)
         self.ui.encounter.horizontalHeader().setMovable(True)
         self.ui.encounter.horizontalHeader().setResizeMode(3)
         self.ui.encounter.verticalHeader().setMovable(True)
@@ -21,13 +37,29 @@ class StartQT4(QtGui.QMainWindow):
     def add_mob(self):
         currRow = self.ui.encounter.rowCount()
         self.ui.encounter.insertRow(currRow)
-    	mobs.append(monsters[self.ui.mobSelect.currentIndex()].addMob())
+        theMonster = self.ui.mobSelect.currentIndex()
+    	mobs.append(monsters[theMonster].addMob(theMonster))
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(currRow, 0, item)
         item.setText(_translate("MainWindow", str(mobs[-1].health), None))
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(currRow, 1, item)
         item.setText(_translate("MainWindow", str(mobs[-1].maxHP), None))
+        item = QtGui.QTableWidgetItem()
+        self.ui.encounter.setItem(currRow, 2, item)
+        item.setText(_translate("MainWindow", 'yes', None))
+        item = QtGui.QTableWidgetItem()
+        self.ui.encounter.setItem(currRow, 3, item)
+        item.setText(_translate("MainWindow", ' ', None))
+        item = QtGui.QTableWidgetItem()
+        self.ui.encounter.setItem(currRow, 4, item)
+        item.setText(_translate("MainWindow", ' ', None))
+        item = QtGui.QTableWidgetItem()
+        self.ui.encounter.setItem(currRow, 5, item)
+        item.setText(_translate("MainWindow", ' ', None))
+        item = QtGui.QTableWidgetItem()
+        self.ui.encounter.setItem(currRow, 6, item)
+        item.setText(_translate("MainWindow", ' ', None))
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setVerticalHeaderItem(currRow, item)
         item.setText(_translate("MainWindow", mobs[-1].name, None))
@@ -38,7 +70,7 @@ class StartQT4(QtGui.QMainWindow):
         mobs[row].health += healnum
         item = self.ui.encounter.item(row, 0)
         item.setText(_translate("MainWindow", str(mobs[row].health), None))
-        self.ui.battleLog.addItem(_translate("MainWindow", "%s healed for %s - %s" % (mobs[row].name, healnum, str(self.ui.hitDescription.text())), None))
+        self.ui.battleLog.addItem(_translate("MainWindow", "%s healed for %s hp - %s" % (mobs[row].name, healnum, str(self.ui.hitDescription.text())), None))
 
     def damage_hp(self):
         hitnum = self.ui.hitValue.value()
@@ -48,12 +80,50 @@ class StartQT4(QtGui.QMainWindow):
         item.setText(_translate("MainWindow", str(mobs[row].health), None))
         self.ui.battleLog.addItem(_translate("MainWindow", "%s took %s damage - %s" % (mobs[row].name, hitnum, str(self.ui.hitDescription.text())), None))
 
+    def get_effect(self, row):
+        self.get_effects(row, 0)
+
+    def get_effects(self, row, column):
+        self.ui.battleLog.addItem(_translate("MainWindow", "You clicked on (%s, %s)" % (row, column), None))
+        if mobs[row].recharge == 1:
+            self.ui.rechargeBox.setChecked(True)
+        else:
+            self.ui.rechargeBox.setChecked(False)
+        self.ui.status1Box.setCurrentIndex(mobs[row].statuses[0])
+        self.ui.status2Box.setCurrentIndex(mobs[row].statuses[1])
+        self.ui.status3Box.setCurrentIndex(mobs[row].statuses[2])
+        self.ui.status4Box.setCurrentIndex(mobs[row].statuses[3])
+        self.ui.mobInfo.setPlainText(monsters[mobs[row].parent].desc)
 
     def set_effects(self):
-    	item = self.ui.encounter.item(0, 5)
-        item.setText(_translate("MainWindow", " ", None))
-        item = self.ui.encounter.item(0, 4)
-        item.setText(_translate("MainWindow", " ", None))
+        row = self.ui.encounter.currentRow()
+        if self.ui.rechargeBox.isChecked():
+            mobs[row].recharge = 1
+            item = self.ui.encounter.item(row, 2)
+            item.setText(_translate("MainWindow", 'yes', None))
+            print "noo"
+        else:
+            mobs[row].recharge = 0
+            item = self.ui.encounter.item(row, 2)
+            item.setText(_translate("MainWindow", 'no', None))
+            print "yesss"
+    	mobs[row].statuses[0] = self.ui.status1Box.currentIndex()
+        mobs[row].statuses[1] = self.ui.status2Box.currentIndex()
+        mobs[row].statuses[2] = self.ui.status3Box.currentIndex()
+        mobs[row].statuses[3] = self.ui.status4Box.currentIndex()
+        y = ''
+        for x in range(4):
+            item = self.ui.encounter.item(row, x+3)
+            item.setText(_translate("MainWindow", self.statDict[mobs[row].statuses[x]], None))
+            if mobs[row].statuses[x]:
+                if y == '':
+                    y = self.statDict[mobs[row].statuses[x]]
+                else:
+                    y = y + ", " + self.statDict[mobs[row].statuses[x]]
+        if y == '':
+            self.ui.battleLog.addItem(_translate("MainWindow", "%s no longer has any ongoing effects" % (mobs[row].name), None))
+        else:
+            self.ui.battleLog.addItem(_translate("MainWindow", "%s is now: %s." % (mobs[row].name, y), None))
 
     def add_monster(self):
         dlg = StartMonsterDialog()
@@ -88,8 +158,4 @@ if __name__ == "__main__":
     sys.exit(app.exec_())
 
 
-    """
-    self.encounter.horizontalHeader().setMovable(True)
-    self.encounter.horizontalHeader().setResizeMode(3)
-    self.encounter.verticalHeader().setMovable(True)
-    """
+    

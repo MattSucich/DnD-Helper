@@ -11,20 +11,22 @@ class Monster(object):
 		self.desc = desc
 		self.number = 0
 
-	def addMob(self):
+	def addMob(self, parent):
 		self.number += 1
 		a = 0 # rolling health
-		for x in xrange(1,self.dicenum):
+		for x in range(1,self.dicenum):
 			a = a + random.randrange(1,self.dicesize)
-		return Mob(self.name, a+self.hpmod, self.number)
+		return Mob(self.name, a+self.hpmod, self.number, parent)
 
 class Mob(object):
 	"""Mob: instance of Monster in a combat encounter"""
-	def __init__(self, name, health, number):
+	def __init__(self, name, health, number, parent):
 		super(Mob, self).__init__()
 		self.name = "%s %s" % (name, number)
 		self.health = health
 		self.maxHP = health
-		self.statuses = []
+		self.recharge = 1
+		self.statuses = [0,0,0,0]
+		self.parent = parent
 
 						

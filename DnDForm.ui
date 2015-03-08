@@ -272,8 +272,271 @@
           <property name="title">
            <string>Status Effects</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="7" column="0" colspan="2">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QComboBox" name="status1Box">
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Blinded</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Charmed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Frightened</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Grappled</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Incapacitated</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Incorporeal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Paralyzed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Petrified</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Prone</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Restrained</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Stunned</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="status2Box">
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Blinded</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Charmed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Frightened</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Grappled</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Incapacitated</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Incorporeal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Paralyzed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Petrified</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Prone</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Restrained</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Stunned</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="status3Box">
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Blinded</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Charmed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Frightened</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Grappled</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Incapacitated</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Incorporeal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Paralyzed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Petrified</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Prone</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Restrained</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Stunned</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="status4Box">
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Blinded</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Charmed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Frightened</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Grappled</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Incapacitated</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Incorporeal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Paralyzed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Petrified</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Prone</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Restrained</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Stunned</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="rechargeBox">
+             <property name="text">
+              <string>Recharge</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="effectButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -283,169 +546,6 @@
              </property>
              <property name="text">
               <string>Set Conditions</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QCheckBox" name="checkBox_11">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Restrained</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QCheckBox" name="checkBox_12">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Stunned</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBox_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Blinded</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QCheckBox" name="checkBox_10">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Prone</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Charmed</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QCheckBox" name="checkBox_5">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Incapacitated</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="checkBox_8">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Petrified</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QCheckBox" name="checkBox_6">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Incorporeal</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QCheckBox" name="checkBox_9">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Poisoned</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QCheckBox" name="checkBox_3">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Frightened</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QCheckBox" name="checkBox_4">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Grappled</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="checkBox_7">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Paralyzed</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0" colspan="2">
-            <widget class="QCheckBox" name="checkBox_13">
-             <property name="text">
-              <string>Recharge</string>
              </property>
             </widget>
            </item>
