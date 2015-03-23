@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>702</width>
-    <height>677</height>
+    <width>788</width>
+    <height>759</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -125,6 +125,9 @@
         <property name="alternatingRowColors">
          <bool>true</bool>
         </property>
+        <property name="showGrid">
+         <bool>false</bool>
+        </property>
         <property name="sortingEnabled">
          <bool>false</bool>
         </property>
@@ -140,12 +143,23 @@
         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
          <bool>false</bool>
         </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
         <attribute name="verticalHeaderDefaultSectionSize">
          <number>27</number>
         </attribute>
         <attribute name="verticalHeaderMinimumSectionSize">
          <number>10</number>
         </attribute>
+        <column>
+         <property name="text">
+          <string>Name</string>
+         </property>
+        </column>
         <column>
          <property name="text">
           <string>Health</string>
@@ -181,7 +195,30 @@
           <string>Status 4</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string/>
+         </property>
+        </column>
        </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QPushButton" name="deleteButton">
+          <property name="text">
+           <string>Delete Mob</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="reorderButton">
+          <property name="text">
+           <string>Toggle Sorting</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -232,19 +269,6 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QPushButton" name="healButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Heal</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0" colspan="2">
             <widget class="QLineEdit" name="hitDescription">
              <property name="sizePolicy">
@@ -255,6 +279,19 @@
              </property>
              <property name="placeholderText">
               <string>Description</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QPushButton" name="healButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Heal</string>
              </property>
             </widget>
            </item>
@@ -607,7 +644,10 @@ p, li { white-space: pre-wrap; }
        </size>
       </property>
       <property name="isWrapping" stdset="0">
-       <bool>true</bool>
+       <bool>false</bool>
+      </property>
+      <property name="resizeMode">
+       <enum>QListView::Adjust</enum>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -631,7 +671,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>702</width>
+     <width>788</width>
      <height>22</height>
     </rect>
    </property>

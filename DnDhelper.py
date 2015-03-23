@@ -19,6 +19,8 @@ class StartQT4(QtGui.QMainWindow):
     10  :   "Restrained",
     11  :   "Stunned"
     }
+    sortVisibility = False
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_MainWindow()
@@ -26,12 +28,14 @@ class StartQT4(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.addMobButton,QtCore.SIGNAL("clicked()"), self.add_mob)
         QtCore.QObject.connect(self.ui.createMonsterButton,QtCore.SIGNAL("clicked()"), self.add_monster)
         QtCore.QObject.connect(self.ui.effectButton,QtCore.SIGNAL("clicked()"), self.set_effects)
+        QtCore.QObject.connect(self.ui.reorderButton,QtCore.SIGNAL("clicked()"), self.toggle_sort)
         QtCore.QObject.connect(self.ui.healButton,QtCore.SIGNAL("clicked()"), self.heal_hp)
         QtCore.QObject.connect(self.ui.damageButton,QtCore.SIGNAL("clicked()"), self.damage_hp)
-        QtCore.QObject.connect(self.ui.encounter, QtCore.SIGNAL("cellClicked(int,int)"), self.get_effects)
-        QtCore.QObject.connect(self.ui.encounter.verticalHeader(), QtCore.SIGNAL("sectionClicked(int)"), self.get_effect)
+        QtCore.QObject.connect(self.ui.encounter, QtCore.SIGNAL("itemSelectionChanged()"), self.get_effects)
+        #QtCore.QObject.connect(self.ui.encounter.verticalHeader(), QtCore.SIGNAL("sectionClicked(int)"), self.get_effect)
         self.ui.encounter.horizontalHeader().setMovable(True)
         self.ui.encounter.horizontalHeader().setResizeMode(3)
+        self.ui.encounter.verticalHeader().setResizeMode(3)
         self.ui.encounter.verticalHeader().setMovable(True)
 
     def add_mob(self):
@@ -41,16 +45,16 @@ class StartQT4(QtGui.QMainWindow):
     	mobs.append(monsters[theMonster].addMob(theMonster))
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(currRow, 0, item)
-        item.setText(_translate("MainWindow", str(mobs[-1].health), None))
+        item.setText(_translate("MainWindow", mobs[-1].name, None))
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(currRow, 1, item)
-        item.setText(_translate("MainWindow", str(mobs[-1].maxHP), None))
+        item.setText(_translate("MainWindow", str(mobs[-1].health), None))
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(currRow, 2, item)
-        item.setText(_translate("MainWindow", 'yes', None))
+        item.setText(_translate("MainWindow", str(mobs[-1].maxHP), None))
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(currRow, 3, item)
-        item.setText(_translate("MainWindow", ' ', None))
+        item.setText(_translate("MainWindow", 'yes', None))
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(currRow, 4, item)
         item.setText(_translate("MainWindow", ' ', None))
@@ -61,14 +65,17 @@ class StartQT4(QtGui.QMainWindow):
         self.ui.encounter.setItem(currRow, 6, item)
         item.setText(_translate("MainWindow", ' ', None))
         item = QtGui.QTableWidgetItem()
+        self.ui.encounter.setItem(currRow, 7, item)
+        item.setText(_translate("MainWindow", ' ', None))
+        item = QtGui.QTableWidgetItem()
         self.ui.encounter.setVerticalHeaderItem(currRow, item)
-        item.setText(_translate("MainWindow", mobs[-1].name, None))
-
+        item.setText(_translate("MainWindow", " -> ", None))
+    
     def heal_hp(self):
         healnum = self.ui.hitValue.value()
         row = self.ui.encounter.currentRow()
         mobs[row].health += healnum
-        item = self.ui.encounter.item(row, 0)
+        item = self.ui.encounter.item(row, 1)
         item.setText(_translate("MainWindow", str(mobs[row].health), None))
         self.ui.battleLog.addItem(_translate("MainWindow", "%s healed for %s hp - %s" % (mobs[row].name, healnum, str(self.ui.hitDescription.text())), None))
 
@@ -76,35 +83,50 @@ class StartQT4(QtGui.QMainWindow):
         hitnum = self.ui.hitValue.value()
         row = self.ui.encounter.currentRow()
         mobs[row].health -= hitnum
-        item = self.ui.encounter.item(row, 0)
+        item = self.ui.encounter.item(row, 1)
         item.setText(_translate("MainWindow", str(mobs[row].health), None))
         self.ui.battleLog.addItem(_translate("MainWindow", "%s took %s damage - %s" % (mobs[row].name, hitnum, str(self.ui.hitDescription.text())), None))
-
+    """
     def get_effect(self, row):
         self.get_effects(row, 0)
+    """
+    def get_effects(self):
+        ranges = self.ui.encounter.selectedRanges()
+        self.ui.rechargeBox.setChecked(False)
+        self.ui.status1Box.setCurrentIndex(0)
+        self.ui.status2Box.setCurrentIndex(0)
+        self.ui.status3Box.setCurrentIndex(0)
+        self.ui.status4Box.setCurrentIndex(0)
+        self.ui.mobInfo.setPlainText(" ")
+        for rows in ranges:
+            self.ui.encounter.setRangeSelected(QtGui.QTableWidgetSelectionRange(rows.topRow(), 0, rows.bottomRow(), 8), True)
+        if len(ranges) == 1 and ranges[0].rowCount() == 1:
+            row = ranges[0].topRow()
+            if mobs[row].recharge == 1:
+                self.ui.rechargeBox.setChecked(True)
+            else:
+                self.ui.rechargeBox.setChecked(False)
+            self.ui.status1Box.setCurrentIndex(mobs[row].statuses[0])
+            self.ui.status2Box.setCurrentIndex(mobs[row].statuses[1])
+            self.ui.status3Box.setCurrentIndex(mobs[row].statuses[2])
+            self.ui.status4Box.setCurrentIndex(mobs[row].statuses[3])
+            self.ui.mobInfo.setPlainText(monsters[mobs[row].parent].desc)
 
-    def get_effects(self, row, column):
-        self.ui.battleLog.addItem(_translate("MainWindow", "You clicked on (%s, %s)" % (row, column), None))
-        if mobs[row].recharge == 1:
-            self.ui.rechargeBox.setChecked(True)
-        else:
-            self.ui.rechargeBox.setChecked(False)
-        self.ui.status1Box.setCurrentIndex(mobs[row].statuses[0])
-        self.ui.status2Box.setCurrentIndex(mobs[row].statuses[1])
-        self.ui.status3Box.setCurrentIndex(mobs[row].statuses[2])
-        self.ui.status4Box.setCurrentIndex(mobs[row].statuses[3])
-        self.ui.mobInfo.setPlainText(monsters[mobs[row].parent].desc)
+    def toggle_sort(self):
+        self.sortVisibility = not self.sortVisibility
+        self.ui.encounter.verticalHeader().setVisible(self.sortVisibility)
+
 
     def set_effects(self):
         row = self.ui.encounter.currentRow()
         if self.ui.rechargeBox.isChecked():
             mobs[row].recharge = 1
-            item = self.ui.encounter.item(row, 2)
+            item = self.ui.encounter.item(row, 3)
             item.setText(_translate("MainWindow", 'yes', None))
             print "noo"
         else:
             mobs[row].recharge = 0
-            item = self.ui.encounter.item(row, 2)
+            item = self.ui.encounter.item(row, 3)
             item.setText(_translate("MainWindow", 'no', None))
             print "yesss"
     	mobs[row].statuses[0] = self.ui.status1Box.currentIndex()
@@ -113,7 +135,7 @@ class StartQT4(QtGui.QMainWindow):
         mobs[row].statuses[3] = self.ui.status4Box.currentIndex()
         y = ''
         for x in range(4):
-            item = self.ui.encounter.item(row, x+3)
+            item = self.ui.encounter.item(row, x+4)
             item.setText(_translate("MainWindow", self.statDict[mobs[row].statuses[x]], None))
             if mobs[row].statuses[x]:
                 if y == '':
