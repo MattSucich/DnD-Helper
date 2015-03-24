@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>788</width>
-    <height>759</height>
+    <height>793</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,17 +42,34 @@
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item>
-       <widget class="QPushButton" name="createMonsterButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Create Monster</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QPushButton" name="createMonsterButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Create Monster</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="editMonsterButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Edit Monster</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -110,9 +127,6 @@
         <property name="horizontalScrollBarPolicy">
          <enum>Qt::ScrollBarAsNeeded</enum>
         </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
         <property name="dragEnabled">
          <bool>false</bool>
         </property>
@@ -167,32 +181,27 @@
         </column>
         <column>
          <property name="text">
-          <string>Max HP</string>
+          <string>Rech.</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Recharge</string>
+          <string>Stat</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Status 1</string>
+          <string>Stat</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Status 2</string>
+          <string>Stat</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Status 3</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Status 4</string>
+          <string>Stat</string>
          </property>
         </column>
         <column>
@@ -241,6 +250,9 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="maximum">
+              <number>999999999</number>
              </property>
             </widget>
            </item>
