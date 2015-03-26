@@ -1,4 +1,5 @@
 import sys
+import ast
 from PyQt4 import QtCore, QtGui
 from MainForm import Ui_MainWindow, _translate
 from monsterDialog import Ui_monsterDialog
@@ -35,18 +36,23 @@ class StartQT4(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.deleteButton,QtCore.SIGNAL("clicked()"), self.delete_mobs)
         QtCore.QObject.connect(self.ui.encounter, QtCore.SIGNAL("itemSelectionChanged()"), self.get_effects)
         QtCore.QObject.connect(self.ui.encounter, QtCore.SIGNAL("cellChanged(int,int)"), self.get_rename)
+        QtCore.QObject.connect(self.ui.actionSave, QtCore.SIGNAL("triggered()"), self.save_all)
+        QtCore.QObject.connect(self.ui.actionLoad, QtCore.SIGNAL("triggered()"), self.load_all)
         self.ui.encounter.horizontalHeader().setMovable(True)
         self.ui.encounter.horizontalHeader().setResizeMode(3)
         self.ui.encounter.verticalHeader().setResizeMode(3)
         self.ui.encounter.verticalHeader().setMovable(True)
 
     def add_mob(self):
+        theMonster = self.ui.mobSelect.currentIndex()
+        mobs.append(monsters[theMonster].addMob(theMonster))
+        self.populate_mob()
+
+    def populate_mob(self):
         self.renameFlag = False
         currRow = self.ui.encounter.rowCount()
         self.ui.encounter.insertRow(currRow)
-        theMonster = self.ui.mobSelect.currentIndex()
-    	mobs.append(monsters[theMonster].addMob(theMonster))
-        print mobs[-1].__dict__ #for use in saving/loading, it's basic json shit.
+        #print mobs[-1].__dict__ #for use in saving/loading, it's basic json shit.
         
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(currRow, 0, item)
@@ -92,26 +98,47 @@ class StartQT4(QtGui.QMainWindow):
     
     def heal_hp(self):
         healnum = self.ui.hitValue.value()
-        row = self.ui.encounter.currentRow()
-        mobs[row].health += healnum
-        item = self.ui.encounter.item(row, 1)
-        item.setText("%s/%s" % (mobs[row].health, mobs[row].maxHP))
-        self.ui.battleLog.addItem("%s healed for %s hp - %s" % (mobs[row].name, healnum, str(self.ui.hitDescription.text())))
+        ranges = self.ui.encounter.selectedRanges()
+        names = []
+        for rows in ranges:
+            for row in range(rows.topRow(), rows.bottomRow() +1):
+                names.append(mobs[row].name)
+                mobs[row].health += healnum
+                item = self.ui.encounter.item(row, 1)
+                item.setText("%s/%s" % (mobs[row].health, mobs[row].maxHP))
+        if len(names) != 0:
+            s = ', '.join(names)
+            self.ui.battleLog.addItem("%s healed for %s hp - %s" % (mobs[row].name, healnum, str(self.ui.hitDescription.text())))
 
     def damage_hp(self):
         hitnum = self.ui.hitValue.value()
-        row = self.ui.encounter.currentRow()
-        mobs[row].health -= hitnum
-        item = self.ui.encounter.item(row, 1)
-        item.setText("%s/%s" % (mobs[row].health, mobs[row].maxHP))
-        self.ui.battleLog.addItem("%s took %s damage - %s" % (mobs[row].name, hitnum, str(self.ui.hitDescription.text())))
-        if mobs[row].health <= 0:
-            self.ui.battleLog.addItem("%s died!" % (mobs[row].name))
-            self.delete_mob(row)
+        ranges = self.ui.encounter.selectedRanges()
+        names = []
+        death = []
+        for rows in ranges:
+            for row in range(rows.topRow(), rows.bottomRow() +1):
+                names.append(mobs[row].name)
+                mobs[row].health -= hitnum
+                if mobs[row].health <= 0:
+                    death.append(1)
+                else: 
+                    death.append(0)
+                item = self.ui.encounter.item(row, 1)
+                item.setText("%s/%s" % (mobs[row].health, mobs[row].maxHP))
+        if len(names) != 0:
+            s = ', '.join(names)
+            self.ui.battleLog.addItem("%s took %s damage - %s" % (s, hitnum, str(self.ui.hitDescription.text())))
+            names = []
+            for x in death: 
+                if death[x] == 1:
+                    names.append(mobs[x].name)
+                    self.delete_mob(x)
+            s = ', '.join(names)
+            self.ui.battleLog.addItem("%s died!" % (s))
 
     def get_rename(self, row, col):
         if col == 0 and self.renameFlag:
-            mobs[row].name = self.ui.encounter.item(row, col).text()
+            mobs[row].name = str(self.ui.encounter.item(row, col).text())
     
     def get_effects(self):
         ranges = self.ui.encounter.selectedRanges()
@@ -141,34 +168,46 @@ class StartQT4(QtGui.QMainWindow):
 
 
     def set_effects(self):
-        row = self.ui.encounter.currentRow()
-        if self.ui.rechargeBox.isChecked():
-            mobs[row].recharge = 1
-            item = self.ui.encounter.item(row, 2)
-            item.setText('yes')
-            print "noo"
-        else:
-            mobs[row].recharge = 0
-            item = self.ui.encounter.item(row, 2)
-            item.setText('no')
-            print "yesss"
-    	mobs[row].statuses[0] = self.ui.status1Box.currentIndex()
-        mobs[row].statuses[1] = self.ui.status2Box.currentIndex()
-        mobs[row].statuses[2] = self.ui.status3Box.currentIndex()
-        mobs[row].statuses[3] = self.ui.status4Box.currentIndex()
-        y = ''
-        for x in range(4):
-            item = self.ui.encounter.item(row, x+3)
-            item.setText(self.statDict[mobs[row].statuses[x]])
-            if mobs[row].statuses[x]:
-                if y == '':
-                    y = self.statDict[mobs[row].statuses[x]]
+        ranges = self.ui.encounter.selectedRanges()
+        names = []
+        h = ["has", "have"]
+        i = ["is", "are"]
+        for rows in ranges:
+            for row in range(rows.topRow(), rows.bottomRow() +1):
+                names.append(mobs[row].name)
+                if self.ui.rechargeBox.isChecked():
+                    mobs[row].recharge = 1
+                    item = self.ui.encounter.item(row, 2)
+                    item.setText('yes')
+                    print "noo"
                 else:
-                    y = y + ", " + self.statDict[mobs[row].statuses[x]]
-        if y == '':
-            self.ui.battleLog.addItem("%s no longer has any ongoing effects" % (mobs[row].name))
-        else:
-            self.ui.battleLog.addItem("%s is now: %s." % (mobs[row].name, y))
+                    mobs[row].recharge = 0
+                    item = self.ui.encounter.item(row, 2)
+                    item.setText('no')
+                    print "yesss"
+            	mobs[row].statuses[0] = self.ui.status1Box.currentIndex()
+                mobs[row].statuses[1] = self.ui.status2Box.currentIndex()
+                mobs[row].statuses[2] = self.ui.status3Box.currentIndex()
+                mobs[row].statuses[3] = self.ui.status4Box.currentIndex()
+                y = ''
+                for x in range(4):
+                    item = self.ui.encounter.item(row, x+3)
+                    item.setText(self.statDict[mobs[row].statuses[x]])
+                    if mobs[row].statuses[x]:
+                        if y == '':
+                            y = self.statDict[mobs[row].statuses[x]]
+                        else:
+                            y = y + ", " + self.statDict[mobs[row].statuses[x]]
+
+        s = ', '.join(names)
+        a = 0
+        if len(names) != 0:
+            if len(names) > 1:
+                a = 1
+            if y == '':
+                self.ui.battleLog.addItem("%s no longer has any ongoing effects" % (s, h[a]))
+            else:
+                self.ui.battleLog.addItem("%s %s now: %s." % (s, i[a], y))
 
     def add_monster(self):
         dlg = StartMonsterDialog()
@@ -196,6 +235,44 @@ class StartQT4(QtGui.QMainWindow):
     def rename_mob(self):
         row = self.ui.encounter.currentRow()
         self.ui.encounter.item(row, 0)
+
+    def save_all(self):
+        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save File', './', selectedFilter='*.txt')
+        if fileName:
+            write = open(fileName, "w")
+            write.write("%s\n" % (len(monsters)))
+            for x in monsters:
+                write.write("%s\n" % (x.__dict__))
+            write.write("%s\n" % (len(mobs)))
+            for x in mobs:
+                write.write("%s\n" % (x.__dict__))
+            write.close()
+
+    def load_all(self):
+        fileName = QtGui.QFileDialog.getOpenFileName(self, 'Load From File', './', selectedFilter='*.txt')
+        if fileName:
+            self.ui.encounter.clearContents()
+            self.ui.encounter.setRowCount(0)
+            self.ui.mobSelect.clear()
+            load = open(fileName, "r")
+            monlen = int(load.readline())
+            print monlen
+            del monsters[:]
+            for x in range(0, monlen):
+                monsters.append(Monster())
+                monsters[-1].__dict__ = ast.literal_eval(load.readline())
+                self.ui.mobSelect.addItem(monsters[-1].name, None)
+            moblen = int(load.readline())
+            print moblen
+            del mobs[:]
+            for x in range(0, moblen):
+                mobs.append(Monster())
+                mobs[-1].__dict__ = ast.literal_eval(load.readline())
+                self.populate_mob()
+
+            load.close()
+
+
         
 
 class StartMonsterDialog(QtGui.QDialog):
@@ -205,7 +282,7 @@ class StartMonsterDialog(QtGui.QDialog):
         self.ui.setupUi(self)
 
     def getValues(self):
-        return Monster(self.ui.nameLine.text(), int(self.ui.numDice.text()), int(self.ui.dieSize.text()), int(self.ui.hitDiceMod.text()), self.ui.descriptionBox.toPlainText())
+        return Monster(str(self.ui.nameLine.text()), int(self.ui.numDice.text()), int(self.ui.dieSize.text()), int(self.ui.hitDiceMod.text()), str(self.ui.descriptionBox.toPlainText()))
 
 
 if __name__ == "__main__":

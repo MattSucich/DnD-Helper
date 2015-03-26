@@ -2,7 +2,9 @@ import random
 
 class Monster(object):
 	"""Monster: stores name, description and hit dice for adding mobs to the combat order"""
-	def __init__(self, name, dicenum, dicesize, hpmod, desc):
+	def __init__(self, dump):
+		self.__dict__ = dump
+	def __init__(self, name = "1", dicenum = 1, dicesize = 1, hpmod = 1, desc = "1"):
 		super(Monster, self).__init__()
 		self.name = name
 		self.dicenum = dicenum
@@ -20,7 +22,9 @@ class Monster(object):
 
 class Mob(object):
 	"""Mob: instance of Monster in a combat encounter"""
-	def __init__(self, name, health, number, parent):
+	def __init__(self, dump):
+		self.__dict__ = dump
+	def __init__(self, name = "1", health = 1, number = 1, parent = 1):
 		super(Mob, self).__init__()
 		self.name = str("%s %s" % (name, number))
 		self.health = health
