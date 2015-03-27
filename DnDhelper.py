@@ -108,33 +108,39 @@ class StartQT4(QtGui.QMainWindow):
                 item.setText("%s/%s" % (mobs[row].health, mobs[row].maxHP))
         if len(names) != 0:
             s = ', '.join(names)
-            self.ui.battleLog.addItem("%s healed for %s hp - %s" % (mobs[row].name, healnum, str(self.ui.hitDescription.text())))
-
+            details = str(self.ui.hitDescription.text())
+            if len(details) > 0:
+                self.ui.battleLog.addItem("%s healed for %s hp - %s" % (mobs[row].name, healnum, details))
+            else:
+                self.ui.battleLog.addItem("%s healed for %s hp!" % (mobs[row].name, healnum))
     def damage_hp(self):
         hitnum = self.ui.hitValue.value()
         ranges = self.ui.encounter.selectedRanges()
         names = []
-        death = []
+        death = [0] * len(mobs)
         for rows in ranges:
             for row in range(rows.topRow(), rows.bottomRow() +1):
                 names.append(mobs[row].name)
                 mobs[row].health -= hitnum
                 if mobs[row].health <= 0:
-                    death.append(1)
-                else: 
-                    death.append(0)
+                    death[row] = 1
                 item = self.ui.encounter.item(row, 1)
                 item.setText("%s/%s" % (mobs[row].health, mobs[row].maxHP))
         if len(names) != 0:
             s = ', '.join(names)
-            self.ui.battleLog.addItem("%s took %s damage - %s" % (s, hitnum, str(self.ui.hitDescription.text())))
+            details = str(self.ui.hitDescription.text())
+            if len(details) > 0:
+                self.ui.battleLog.addItem("%s took %s damage - %s" % (s, hitnum, details))
+            else:
+                self.ui.battleLog.addItem("%s took %s damage!" % (s, hitnum))
             names = []
-            for x in death: 
+            for x in range(0, len(death)): 
                 if death[x] == 1:
                     names.append(mobs[x].name)
                     self.delete_mob(x)
-            s = ', '.join(names)
-            self.ui.battleLog.addItem("%s died!" % (s))
+            if len(names) > 0:
+                s = ', '.join(names)
+                self.ui.battleLog.addItem("%s died!" % (s))
 
     def get_rename(self, row, col):
         if col == 0 and self.renameFlag:
@@ -147,9 +153,15 @@ class StartQT4(QtGui.QMainWindow):
         self.ui.status2Box.setCurrentIndex(0)
         self.ui.status3Box.setCurrentIndex(0)
         self.ui.status4Box.setCurrentIndex(0)
-        self.ui.mobInfo.setPlainText(" ")
+        self.ui.mobInfo.setPlainText("Select a mob from the table to see information here. \n\nIf you select multiple mobs, they must be the same type.")
+        same = -2
         for rows in ranges:
             self.ui.encounter.setRangeSelected(QtGui.QTableWidgetSelectionRange(rows.topRow(), 0, rows.bottomRow(), 7), True)
+            for row in range(rows.topRow(), rows.bottomRow() +1):
+                if same == -2:
+                    same = mobs[row].parent
+                elif same != mobs[row].parent:
+                    same = -1
         if len(ranges) == 1 and ranges[0].rowCount() == 1:
             row = ranges[0].topRow()
             if mobs[row].recharge == 1:
@@ -160,7 +172,8 @@ class StartQT4(QtGui.QMainWindow):
             self.ui.status2Box.setCurrentIndex(mobs[row].statuses[1])
             self.ui.status3Box.setCurrentIndex(mobs[row].statuses[2])
             self.ui.status4Box.setCurrentIndex(mobs[row].statuses[3])
-            self.ui.mobInfo.setPlainText(monsters[mobs[row].parent].desc)
+        if same >= 0:
+            self.ui.mobInfo.setPlainText(monsters[mobs[ranges[0].topRow()].parent].desc)
 
     def toggle_sort(self):
         self.sortVisibility = not self.sortVisibility
@@ -246,6 +259,10 @@ class StartQT4(QtGui.QMainWindow):
             write.write("%s\n" % (len(mobs)))
             for x in mobs:
                 write.write("%s\n" % (x.__dict__))
+            numlog = self.ui.battleLog.count()
+            write.write("%s\n" % (numlog))
+            for x in range(0, numlog):
+                write.write("%s\n" % (str(self.ui.battleLog.item(x).text())))
             write.close()
 
     def load_all(self):
@@ -253,23 +270,26 @@ class StartQT4(QtGui.QMainWindow):
         if fileName:
             self.ui.encounter.clearContents()
             self.ui.encounter.setRowCount(0)
+            self.ui.battleLog.clear()
             self.ui.mobSelect.clear()
             load = open(fileName, "r")
             monlen = int(load.readline())
-            print monlen
+            #print monlen
             del monsters[:]
             for x in range(0, monlen):
                 monsters.append(Monster())
                 monsters[-1].__dict__ = ast.literal_eval(load.readline())
                 self.ui.mobSelect.addItem(monsters[-1].name, None)
             moblen = int(load.readline())
-            print moblen
+            #print moblen
             del mobs[:]
             for x in range(0, moblen):
                 mobs.append(Monster())
                 mobs[-1].__dict__ = ast.literal_eval(load.readline())
                 self.populate_mob()
-
+            lognum = int(load.readline())
+            for x in range(0, lognum):
+                self.ui.battleLog.addItem(load.readline()[:-1])
             load.close()
 
 
