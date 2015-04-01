@@ -13,15 +13,18 @@ class StartQT4(QtGui.QMainWindow):
     3   :   "Frightened",
     4   :   "Grappled",
     5   :   "Incapacitated",
-    6   :   "Incorporeal",
+    6   :   "Invisible",
     7   :   "Paralyzed",
     8   :   "Petrified",
-    9   :   "Prone",
-    10  :   "Restrained",
-    11  :   "Stunned"
+    9   :   "Poisoned",
+    10  :   "Prone",
+    11  :   "Restrained",
+    12  :   "Stunned",
+    13  :   "Unconscious"
     }
     sortVisibility = False
     renameFlag = True
+    shownRows = 1
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -29,6 +32,8 @@ class StartQT4(QtGui.QMainWindow):
         self.ui.setupUi(self)
         QtCore.QObject.connect(self.ui.addMobButton,QtCore.SIGNAL("clicked()"), self.add_mob)
         QtCore.QObject.connect(self.ui.createMonsterButton,QtCore.SIGNAL("clicked()"), self.add_monster)
+        QtCore.QObject.connect(self.ui.actionAddMonster,QtCore.SIGNAL("triggered()"), self.add_monster)
+        QtCore.QObject.connect(self.ui.addRowButton,QtCore.SIGNAL("clicked()"), self.add_status_row)
         QtCore.QObject.connect(self.ui.effectButton,QtCore.SIGNAL("clicked()"), self.set_effects)
         QtCore.QObject.connect(self.ui.reorderButton,QtCore.SIGNAL("clicked()"), self.toggle_sort)
         QtCore.QObject.connect(self.ui.healButton,QtCore.SIGNAL("clicked()"), self.heal_hp)
@@ -42,6 +47,19 @@ class StartQT4(QtGui.QMainWindow):
         self.ui.encounter.horizontalHeader().setResizeMode(3)
         self.ui.encounter.verticalHeader().setResizeMode(3)
         self.ui.encounter.verticalHeader().setMovable(True)
+        self.ui.encounter.setSelectionBehavior(1)
+        self.ui.statusBox = [None] * len(self.statDict)
+        for num in range(0, len(self.statDict)):
+            self.ui.statusBox[num] = QtGui.QComboBox(self.ui.groupBox_2)
+            self.ui.statusBox[num].setObjectName("statusBox_%s" % (num))
+            for _,v in self.statDict.iteritems():
+                self.ui.statusBox[num].addItem(v)
+            self.ui.verticalLayout_2.insertWidget(num, self.ui.statusBox[num])
+            QtCore.QObject.connect(self.ui.statusBox[num], QtCore.SIGNAL("currentIndexChanged()"), self.hide_statuses)
+            if num > 0:
+                self.ui.statusBox[num].setVisible(False)
+            self.resize_columns()
+        
 
     def add_mob(self):
         theMonster = self.ui.mobSelect.currentIndex()
@@ -68,26 +86,12 @@ class StartQT4(QtGui.QMainWindow):
         item.setText('yes')
         item.setFlags( QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled )
 
-        item = QtGui.QTableWidgetItem()
-        self.ui.encounter.setItem(currRow, 3, item)
-        item.setIcon(QtGui.QIcon('asdf.png'))
-        item.setText("Fuck you")
-        item.setFlags( QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled )
-
-        item = QtGui.QTableWidgetItem()
-        self.ui.encounter.setItem(currRow, 4, item)
-        item.setIcon(QtGui.QIcon('asdf.png'))
-        item.setFlags( QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled )
-
-        item = QtGui.QTableWidgetItem()
-        self.ui.encounter.setItem(currRow, 5, item)
-        item.setIcon(QtGui.QIcon('asdf.png'))
-        item.setFlags( QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled )
-        
-        item = QtGui.QTableWidgetItem()
-        self.ui.encounter.setItem(currRow, 6, item)
-        item.setIcon(QtGui.QIcon('asdf.png')) #placeholders
-        item.setFlags( QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled )
+        for x in range(0, len(self.statDict)):
+            item = QtGui.QTableWidgetItem()
+            self.ui.encounter.setItem(currRow, x + 3, item)
+            item.setText(self.statDict[mobs[-1].statuses[x]])
+            item.setFlags( QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled )
+            #self.ui.encounter.setColumnHidden(x+3, 1)
 
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setVerticalHeaderItem(currRow, item)
@@ -110,9 +114,9 @@ class StartQT4(QtGui.QMainWindow):
             s = ', '.join(names)
             details = str(self.ui.hitDescription.text())
             if len(details) > 0:
-                self.ui.battleLog.addItem("%s healed for %s hp - %s" % (mobs[row].name, healnum, details))
+                self.ui.battleLog.insertItem(0, "%s healed for %s hp - %s" % (mobs[row].name, healnum, details))
             else:
-                self.ui.battleLog.addItem("%s healed for %s hp!" % (mobs[row].name, healnum))
+                self.ui.battleLog.insertItem(0, "%s healed for %s hp!" % (mobs[row].name, healnum))
     def damage_hp(self):
         hitnum = self.ui.hitValue.value()
         ranges = self.ui.encounter.selectedRanges()
@@ -130,9 +134,9 @@ class StartQT4(QtGui.QMainWindow):
             s = ', '.join(names)
             details = str(self.ui.hitDescription.text())
             if len(details) > 0:
-                self.ui.battleLog.addItem("%s took %s damage - %s" % (s, hitnum, details))
+                self.ui.battleLog.insertItem(0, "%s took %s damage - %s" % (s, hitnum, details))
             else:
-                self.ui.battleLog.addItem("%s took %s damage!" % (s, hitnum))
+                self.ui.battleLog.insertItem(0, "%s took %s damage!" % (s, hitnum))
             names = []
             for x in range(0, len(death)): 
                 if death[x] == 1:
@@ -140,7 +144,7 @@ class StartQT4(QtGui.QMainWindow):
                     self.delete_mob(x)
             if len(names) > 0:
                 s = ', '.join(names)
-                self.ui.battleLog.addItem("%s died!" % (s))
+                self.ui.battleLog.insertItem(0, "%s died!" % (s))
 
     def get_rename(self, row, col):
         if col == 0 and self.renameFlag:
@@ -149,14 +153,14 @@ class StartQT4(QtGui.QMainWindow):
     def get_effects(self):
         ranges = self.ui.encounter.selectedRanges()
         self.ui.rechargeBox.setChecked(False)
-        self.ui.status1Box.setCurrentIndex(0)
-        self.ui.status2Box.setCurrentIndex(0)
-        self.ui.status3Box.setCurrentIndex(0)
-        self.ui.status4Box.setCurrentIndex(0)
+        self.ui.statusBox[0].setCurrentIndex(0)
+        self.shownRows = 1
+        for x in range(1, len(self.ui.statusBox)):
+            self.ui.statusBox[x].setCurrentIndex(0)
+            self.ui.statusBox[x].setVisible(False)
         self.ui.mobInfo.setPlainText("Select a mob from the table to see information here. \n\nIf you select multiple mobs, they must be the same type.")
         same = -2
         for rows in ranges:
-            self.ui.encounter.setRangeSelected(QtGui.QTableWidgetSelectionRange(rows.topRow(), 0, rows.bottomRow(), 7), True)
             for row in range(rows.topRow(), rows.bottomRow() +1):
                 if same == -2:
                     same = mobs[row].parent
@@ -168,16 +172,24 @@ class StartQT4(QtGui.QMainWindow):
                 self.ui.rechargeBox.setChecked(True)
             else:
                 self.ui.rechargeBox.setChecked(False)
-            self.ui.status1Box.setCurrentIndex(mobs[row].statuses[0])
-            self.ui.status2Box.setCurrentIndex(mobs[row].statuses[1])
-            self.ui.status3Box.setCurrentIndex(mobs[row].statuses[2])
-            self.ui.status4Box.setCurrentIndex(mobs[row].statuses[3])
+            for x in range(0, len(mobs[row].statuses)):
+                if mobs[row].statuses[x] == 0:
+                    break
+                self.ui.statusBox[x].setCurrentIndex(mobs[row].statuses[x])
+                self.shownRows = x
+                self.ui.statusBox[x].setVisible(True)
         if same >= 0:
             self.ui.mobInfo.setPlainText(monsters[mobs[ranges[0].topRow()].parent].desc)
 
     def toggle_sort(self):
         self.sortVisibility = not self.sortVisibility
         self.ui.encounter.verticalHeader().setVisible(self.sortVisibility)
+
+    def add_status_row(self):
+        self.ui.statusBox[self.shownRows].setVisible(True)
+        self.shownRows += 1
+        if shownRows == len(self.statDict):
+            self.shownRows -= 1
 
 
     def set_effects(self):
@@ -192,18 +204,21 @@ class StartQT4(QtGui.QMainWindow):
                     mobs[row].recharge = 1
                     item = self.ui.encounter.item(row, 2)
                     item.setText('yes')
-                    print "noo"
                 else:
                     mobs[row].recharge = 0
                     item = self.ui.encounter.item(row, 2)
                     item.setText('no')
-                    print "yesss"
-            	mobs[row].statuses[0] = self.ui.status1Box.currentIndex()
-                mobs[row].statuses[1] = self.ui.status2Box.currentIndex()
-                mobs[row].statuses[2] = self.ui.status3Box.currentIndex()
-                mobs[row].statuses[3] = self.ui.status4Box.currentIndex()
+                y = 0
+                for x in self.ui.statusBox:
+                    if x.currentIndex() != 0:
+                        mobs[row].statuses[y] = x.currentIndex()
+                        y += 1
+                for x in range(y, len(mobs[row].statuses)):
+                    mobs[row].statuses[x] = 0
+                print mobs[row].statuses
+                
                 y = ''
-                for x in range(4):
+                for x in range(0, len(self.statDict)):
                     item = self.ui.encounter.item(row, x+3)
                     item.setText(self.statDict[mobs[row].statuses[x]])
                     if mobs[row].statuses[x]:
@@ -218,9 +233,10 @@ class StartQT4(QtGui.QMainWindow):
             if len(names) > 1:
                 a = 1
             if y == '':
-                self.ui.battleLog.addItem("%s no longer has any ongoing effects" % (s, h[a]))
+                self.ui.battleLog.insertItem(0, "%s no longer has any ongoing effects" % (s, h[a]))
             else:
-                self.ui.battleLog.addItem("%s %s now: %s." % (s, i[a], y))
+                self.ui.battleLog.insertItem(0, "%s %s now: %s." % (s, i[a], y))
+        self.resize_columns()
 
     def add_monster(self):
         dlg = StartMonsterDialog()
@@ -238,12 +254,13 @@ class StartQT4(QtGui.QMainWindow):
     def delete_mobs(self):
         ranges = self.ui.encounter.selectedRanges()
         for rows in ranges:
-            for row in range(rows.topRow(), rows.bottomRow() +1):
+            for row in range(rows.topRow(), rows.bottomRow() + 1):
                 self.delete_mob(row)
 
     def delete_mob(self, row):
         self.ui.encounter.removeRow(row)
         del mobs[row]
+        self.resize_columns()
 
     def rename_mob(self):
         row = self.ui.encounter.currentRow()
@@ -291,6 +308,29 @@ class StartQT4(QtGui.QMainWindow):
             for x in range(0, lognum):
                 self.ui.battleLog.addItem(load.readline()[:-1])
             load.close()
+            self.resize_columns()
+
+    def resize_columns(self):
+        a = 3
+        for x in range(0, self.ui.encounter.rowCount()):
+            for y in range(3, self.ui.encounter.columnCount()):
+                if self.ui.encounter.item(x,y) != None:
+                    if self.ui.encounter.item(x,y).text() != " ":
+                        if y > a:
+                            a = y
+        for y in range(3, self.ui.encounter.columnCount()):
+            if y <= a:
+                self.ui.encounter.setColumnHidden(y, 0)
+            else:
+                self.ui.encounter.setColumnHidden(y, 1)
+        self.ui.encounter.setColumnHidden(y, 0)
+
+    def hide_statuses(self, trash):
+        for x in range(0, len(self.statDict)):
+            #self.ui.statusBox[x].
+            pass
+                        
+                        
 
 
         

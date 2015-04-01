@@ -17,7 +17,10 @@ class Monster(object):
 		self.number += 1
 		a = 0 # rolling health
 		for x in range(1,self.dicenum):
-			a = a + random.randrange(1,self.dicesize)
+			try:
+				a = a + random.randrange(1,self.dicesize)
+			except:
+				a = a + 1;
 		return Mob(self.name, a+self.hpmod, self.number, parent)
 
 class Mob(object):
@@ -30,7 +33,7 @@ class Mob(object):
 		self.health = health
 		self.maxHP = health
 		self.recharge = 1
-		self.statuses = [0,0,0,0]
+		self.statuses = [0] * 14
 		self.parent = parent #to reference description
 
 						
