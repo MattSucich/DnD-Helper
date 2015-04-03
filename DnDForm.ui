@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>788</width>
-    <height>850</height>
+    <height>903</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -276,6 +276,9 @@
            <string>Damage and Healing</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
+           <property name="verticalSpacing">
+            <number>5</number>
+           </property>
            <item row="0" column="0" colspan="2">
             <widget class="QSpinBox" name="hitValue">
              <property name="sizePolicy">
@@ -289,7 +292,51 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="5" column="1">
+            <widget class="QPushButton" name="healButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Heal</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QLabel" name="label">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Helvetica</family>
+               <pointsize>10</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Description</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QPlainTextEdit" name="hitDescription">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
             <widget class="QPushButton" name="damageButton">
              <property name="enabled">
               <bool>true</bool>
@@ -314,29 +361,17 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0" colspan="2">
-            <widget class="QLineEdit" name="hitDescription">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>Description</string>
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="vulnBox">
+             <property name="text">
+              <string>Vulnerability</string>
              </property>
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QPushButton" name="healButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QCheckBox" name="resistBox">
              <property name="text">
-              <string>Heal</string>
+              <string>Resistance</string>
              </property>
             </widget>
            </item>
@@ -354,28 +389,109 @@
           <property name="title">
            <string>Status Effects</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QToolButton" name="addRowButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <property name="verticalSpacing">
+            <number>5</number>
+           </property>
+           <item row="4" column="0">
+            <widget class="QCheckBox" name="incapBox">
              <property name="text">
-              <string>+</string>
+              <string>Incapacitated</string>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="blindBox">
+             <property name="text">
+              <string>Blinded</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="charmBox">
+             <property name="text">
+              <string>Charmed</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="frightBox">
+             <property name="text">
+              <string>Frightened</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="grappleBox">
+             <property name="text">
+              <string>Grappled</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QCheckBox" name="invisBox">
+             <property name="text">
+              <string>Invisible</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="petrifBox">
+             <property name="text">
+              <string>Petrified</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QCheckBox" name="stunBox">
+             <property name="text">
+              <string>Stunned</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QCheckBox" name="unconBox">
+             <property name="text">
+              <string>Unconscious</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="restrainBox">
+             <property name="text">
+              <string>Restrained</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="proneBox">
+             <property name="text">
+              <string>Prone</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="poisonBox">
+             <property name="text">
+              <string>Poisoned</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QCheckBox" name="paraBox">
+             <property name="text">
+              <string>Paralyzed</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
             <widget class="QCheckBox" name="rechargeBox">
              <property name="text">
               <string>Recharge</string>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="17" column="0" colspan="2">
             <widget class="QPushButton" name="effectButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">

@@ -24,7 +24,6 @@ class StartQT4(QtGui.QMainWindow):
     }
     sortVisibility = False
     renameFlag = True
-    shownRows = 1
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -33,7 +32,6 @@ class StartQT4(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.addMobButton,QtCore.SIGNAL("clicked()"), self.add_mob)
         QtCore.QObject.connect(self.ui.createMonsterButton,QtCore.SIGNAL("clicked()"), self.add_monster)
         QtCore.QObject.connect(self.ui.actionAddMonster,QtCore.SIGNAL("triggered()"), self.add_monster)
-        QtCore.QObject.connect(self.ui.addRowButton,QtCore.SIGNAL("clicked()"), self.add_status_row)
         QtCore.QObject.connect(self.ui.effectButton,QtCore.SIGNAL("clicked()"), self.set_effects)
         QtCore.QObject.connect(self.ui.reorderButton,QtCore.SIGNAL("clicked()"), self.toggle_sort)
         QtCore.QObject.connect(self.ui.healButton,QtCore.SIGNAL("clicked()"), self.heal_hp)
@@ -48,17 +46,40 @@ class StartQT4(QtGui.QMainWindow):
         self.ui.encounter.verticalHeader().setResizeMode(3)
         self.ui.encounter.verticalHeader().setMovable(True)
         self.ui.encounter.setSelectionBehavior(1)
-        self.ui.statusBox = [None] * len(self.statDict)
-        for num in range(0, len(self.statDict)):
+        self.ui.statuses = [None] * (len(self.statDict) -1) #setting easier pointers to each check boxsaldk
+        self.ui.statuses[0] = self.ui.blindBox
+        self.ui.statuses[1] = self.ui.charmBox
+        self.ui.statuses[2] = self.ui.frightBox
+        self.ui.statuses[3] = self.ui.grappleBox
+        self.ui.statuses[4] = self.ui.incapBox
+        self.ui.statuses[5] = self.ui.invisBox
+        self.ui.statuses[6] = self.ui.paraBox
+        self.ui.statuses[7] = self.ui.petrifBox
+        self.ui.statuses[8] = self.ui.poisonBox 
+        self.ui.statuses[9] = self.ui.proneBox
+        self.ui.statuses[10] = self.ui.restrainBox
+        self.ui.statuses[11] = self.ui.stunBox
+        self.ui.statuses[12] = self.ui.unconBox
+
+        self.resize_columns()
+
+        """
+        def get_func(a):
+            def func():
+                self.hide_statuses(a)
+            return func
+        
+        for num in range(0, len(self.statDict)-1):
             self.ui.statusBox[num] = QtGui.QComboBox(self.ui.groupBox_2)
             self.ui.statusBox[num].setObjectName("statusBox_%s" % (num))
             for _,v in self.statDict.iteritems():
                 self.ui.statusBox[num].addItem(v)
             self.ui.verticalLayout_2.insertWidget(num, self.ui.statusBox[num])
-            QtCore.QObject.connect(self.ui.statusBox[num], QtCore.SIGNAL("currentIndexChanged()"), self.hide_statuses)
+            #QtCore.QObject.connect(self.ui.statusBox[num], QtCore.SIGNAL("currentIndexChanged(int)"), get_func(num))
             if num > 0:
                 self.ui.statusBox[num].setVisible(False)
             self.resize_columns()
+        """
         
 
     def add_mob(self):
@@ -86,7 +107,7 @@ class StartQT4(QtGui.QMainWindow):
         item.setText('yes')
         item.setFlags( QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled )
 
-        for x in range(0, len(self.statDict)):
+        for x in range(0, len(self.statDict)-1):
             item = QtGui.QTableWidgetItem()
             self.ui.encounter.setItem(currRow, x + 3, item)
             item.setText(self.statDict[mobs[-1].statuses[x]])
@@ -99,6 +120,7 @@ class StartQT4(QtGui.QMainWindow):
         
         self.ui.encounter.verticalHeader().setVisible(self.sortVisibility)
         self.renameFlag = True
+        self.resize_columns()
     
     def heal_hp(self):
         healnum = self.ui.hitValue.value()
@@ -112,7 +134,7 @@ class StartQT4(QtGui.QMainWindow):
                 item.setText("%s/%s" % (mobs[row].health, mobs[row].maxHP))
         if len(names) != 0:
             s = ', '.join(names)
-            details = str(self.ui.hitDescription.text())
+            details = str(self.ui.hitDescription.toPlainText())
             if len(details) > 0:
                 self.ui.battleLog.insertItem(0, "%s healed for %s hp - %s" % (mobs[row].name, healnum, details))
             else:
@@ -132,7 +154,7 @@ class StartQT4(QtGui.QMainWindow):
                 item.setText("%s/%s" % (mobs[row].health, mobs[row].maxHP))
         if len(names) != 0:
             s = ', '.join(names)
-            details = str(self.ui.hitDescription.text())
+            details = str(self.ui.hitDescription.toPlainText())
             if len(details) > 0:
                 self.ui.battleLog.insertItem(0, "%s took %s damage - %s" % (s, hitnum, details))
             else:
@@ -153,11 +175,8 @@ class StartQT4(QtGui.QMainWindow):
     def get_effects(self):
         ranges = self.ui.encounter.selectedRanges()
         self.ui.rechargeBox.setChecked(False)
-        self.ui.statusBox[0].setCurrentIndex(0)
-        self.shownRows = 1
-        for x in range(1, len(self.ui.statusBox)):
-            self.ui.statusBox[x].setCurrentIndex(0)
-            self.ui.statusBox[x].setVisible(False)
+        for x in self.ui.statuses:
+            x.setChecked(False)
         self.ui.mobInfo.setPlainText("Select a mob from the table to see information here. \n\nIf you select multiple mobs, they must be the same type.")
         same = -2
         for rows in ranges:
@@ -175,22 +194,13 @@ class StartQT4(QtGui.QMainWindow):
             for x in range(0, len(mobs[row].statuses)):
                 if mobs[row].statuses[x] == 0:
                     break
-                self.ui.statusBox[x].setCurrentIndex(mobs[row].statuses[x])
-                self.shownRows = x
-                self.ui.statusBox[x].setVisible(True)
+                self.ui.statuses[mobs[row].statuses[x]-1].setChecked(True)
         if same >= 0:
             self.ui.mobInfo.setPlainText(monsters[mobs[ranges[0].topRow()].parent].desc)
 
     def toggle_sort(self):
         self.sortVisibility = not self.sortVisibility
         self.ui.encounter.verticalHeader().setVisible(self.sortVisibility)
-
-    def add_status_row(self):
-        self.ui.statusBox[self.shownRows].setVisible(True)
-        self.shownRows += 1
-        if shownRows == len(self.statDict):
-            self.shownRows -= 1
-
 
     def set_effects(self):
         ranges = self.ui.encounter.selectedRanges()
@@ -209,16 +219,15 @@ class StartQT4(QtGui.QMainWindow):
                     item = self.ui.encounter.item(row, 2)
                     item.setText('no')
                 y = 0
-                for x in self.ui.statusBox:
-                    if x.currentIndex() != 0:
-                        mobs[row].statuses[y] = x.currentIndex()
+                for x in range(0, len(self.ui.statuses)):
+                    if self.ui.statuses[x].isChecked():
+                        mobs[row].statuses[y] = x + 1
                         y += 1
                 for x in range(y, len(mobs[row].statuses)):
                     mobs[row].statuses[x] = 0
-                print mobs[row].statuses
                 
                 y = ''
-                for x in range(0, len(self.statDict)):
+                for x in range(0, len(self.statDict) - 1):
                     item = self.ui.encounter.item(row, x+3)
                     item.setText(self.statDict[mobs[row].statuses[x]])
                     if mobs[row].statuses[x]:
@@ -324,11 +333,13 @@ class StartQT4(QtGui.QMainWindow):
             else:
                 self.ui.encounter.setColumnHidden(y, 1)
         self.ui.encounter.setColumnHidden(y, 0)
-
-    def hide_statuses(self, trash):
-        for x in range(0, len(self.statDict)):
+    """
+    def hide_statuses(self, x):
+        print x
+        for x in range(0, len(self.statDict)-1):
             #self.ui.statusBox[x].
             pass
+    """
                         
                         
 
