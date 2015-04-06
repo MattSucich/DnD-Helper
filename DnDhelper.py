@@ -3,6 +3,7 @@ import ast
 from PyQt4 import QtCore, QtGui
 from MainForm import Ui_MainWindow, _translate
 from monsterDialog import Ui_monsterDialog
+from editDialog import Ui_monsterEdit
 from monster import Monster, Mob
 
 class StartQT4(QtGui.QMainWindow):
@@ -32,6 +33,7 @@ class StartQT4(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.addMobButton,QtCore.SIGNAL("clicked()"), self.add_mob)
         QtCore.QObject.connect(self.ui.createMonsterButton,QtCore.SIGNAL("clicked()"), self.add_monster)
         QtCore.QObject.connect(self.ui.actionAddMonster,QtCore.SIGNAL("triggered()"), self.add_monster)
+        QtCore.QObject.connect(self.ui.actionEditMonster,QtCore.SIGNAL("triggered()"), self.edit_monster)
         QtCore.QObject.connect(self.ui.effectButton,QtCore.SIGNAL("clicked()"), self.set_effects)
         QtCore.QObject.connect(self.ui.reorderButton,QtCore.SIGNAL("clicked()"), self.toggle_sort)
         QtCore.QObject.connect(self.ui.healButton,QtCore.SIGNAL("clicked()"), self.heal_hp)
@@ -144,10 +146,16 @@ class StartQT4(QtGui.QMainWindow):
         ranges = self.ui.encounter.selectedRanges()
         names = []
         death = [0] * len(mobs)
+        mult = 1
+        if self.ui.vulnBox.isChecked():
+            mult *= 2
+        if self.ui.resistBox.isChecked():
+            mult /= 2.0
+        damage = int(hitnum*mult)
         for rows in ranges:
             for row in range(rows.topRow(), rows.bottomRow() +1):
                 names.append(mobs[row].name)
-                mobs[row].health -= hitnum
+                mobs[row].health -= damage
                 if mobs[row].health <= 0:
                     death[row] = 1
                 item = self.ui.encounter.item(row, 1)
@@ -155,6 +163,8 @@ class StartQT4(QtGui.QMainWindow):
         if len(names) != 0:
             s = ', '.join(names)
             details = str(self.ui.hitDescription.toPlainText())
+            if mult != 1:
+                hitnum = "%s (%s*%s)" % (damage, hitnum, mult)
             if len(details) > 0:
                 self.ui.battleLog.insertItem(0, "%s took %s damage - %s" % (s, hitnum, details))
             else:
@@ -258,7 +268,26 @@ class StartQT4(QtGui.QMainWindow):
             self.ui.mobInfo.setPlainText(newMonster.desc)
 
     def edit_monster(self):
-        pass
+        dlg = StartMonsterEdit()
+        dlg.__init__()
+        dlg.ui.monsterSelect.setModel(self.ui.mobSelect.model())
+        def edit_mon():
+            x = dlg.ui.monsterSelect.currentIndex()
+            monsters[x] = dlg.changeValues(monsters[x])
+            dlg.ui.monsterSelect.setItemText(x, monsters[x].name)
+            self.ui.mobSelect.setItemText(x, monsters[x].name)
+        def fill_data(x):
+            dlg.ui.nameLine.setText(str(monsters[x].name))
+            dlg.ui.numDice.setText(str(monsters[x].dicenum))
+            dlg.ui.dieSize.setText(str(monsters[x].dicesize))
+            dlg.ui.hitDiceMod.setText(str(monsters[x].hpmod))
+            dlg.ui.descriptionBox.setPlainText(str(monsters[x].desc))
+        QtCore.QObject.connect(dlg.ui.buttonBox, QtCore.SIGNAL("accepted()"), edit_mon)
+        QtCore.QObject.connect(dlg.ui.applyButton, QtCore.SIGNAL("clicked()"), edit_mon)
+        QtCore.QObject.connect(dlg.ui.monsterSelect, QtCore.SIGNAL("currentIndexChanged(int)"), fill_data)
+        fill_data(0)
+        dlg.exec_()
+
 
     def delete_mobs(self):
         ranges = self.ui.encounter.selectedRanges()
@@ -289,6 +318,15 @@ class StartQT4(QtGui.QMainWindow):
             write.write("%s\n" % (numlog))
             for x in range(0, numlog):
                 write.write("%s\n" % (str(self.ui.battleLog.item(x).text())))
+            write.close()
+
+    def save_mob(self):
+        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save File', './', selectedFilter='*.txt')
+        if fileName:
+            write = open(fileName, "w")
+            write.write("%s\n" % (len(monsters)))
+            for x in monsters:
+                write.write("%s\n" % (x.__dict__))
             write.close()
 
     def load_all(self):
@@ -333,18 +371,9 @@ class StartQT4(QtGui.QMainWindow):
             else:
                 self.ui.encounter.setColumnHidden(y, 1)
         self.ui.encounter.setColumnHidden(y, 0)
-    """
-    def hide_statuses(self, x):
-        print x
-        for x in range(0, len(self.statDict)-1):
-            #self.ui.statusBox[x].
-            pass
-    """
-                        
-                        
 
 
-        
+
 
 class StartMonsterDialog(QtGui.QDialog):
     def __init__(self, parent=None):
@@ -353,8 +382,24 @@ class StartMonsterDialog(QtGui.QDialog):
         self.ui.setupUi(self)
 
     def getValues(self):
-        return Monster(str(self.ui.nameLine.text()), int(self.ui.numDice.text()), int(self.ui.dieSize.text()), int(self.ui.hitDiceMod.text()), str(self.ui.descriptionBox.toPlainText()))
+        return Monster(str(self.ui.nameLine.text()), int(self.ui.numDice.text()), 
+            int(self.ui.dieSize.text()), int(self.ui.hitDiceMod.text()), 
+            str(self.ui.descriptionBox.toPlainText()))
 
+class StartMonsterEdit(QtGui.QDialog):
+    def __init__(self, parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        self.ui = Ui_monsterEdit()
+        self.ui.setupUi(self)
+        self.ui.applyButton = self.ui.buttonBox.button(QtGui.QDialogButtonBox.Apply)
+
+    def changeValues(self, x):
+        x.edit(str(self.ui.nameLine.text()), int(self.ui.numDice.text()), 
+            int(self.ui.dieSize.text()), int(self.ui.hitDiceMod.text()), 
+            str(self.ui.descriptionBox.toPlainText()))
+        return x
+
+        
 
 if __name__ == "__main__":
     monsters = []
