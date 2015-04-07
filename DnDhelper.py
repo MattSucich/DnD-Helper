@@ -318,6 +318,7 @@ class StartQT4(QtGui.QMainWindow):
             write.write("%s\n" % (numlog))
             for x in range(0, numlog):
                 write.write("%s\n" % (str(self.ui.battleLog.item(x).text())))
+            write.write("%s\n" % str(self.ui.scratchPad.toPlainText()))
             write.close()
 
     def save_mob(self):
@@ -354,6 +355,7 @@ class StartQT4(QtGui.QMainWindow):
             lognum = int(load.readline())
             for x in range(0, lognum):
                 self.ui.battleLog.addItem(load.readline()[:-1])
+            self.ui.scratchPad.setPlainText(load.read()[:-1])
             load.close()
             self.resize_columns()
 
