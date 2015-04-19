@@ -1,9 +1,10 @@
-import sys
-import ast
+from sys import argv, exit
+from ast import literal_eval
 from PyQt4 import QtCore, QtGui
 from MainForm import Ui_MainWindow, _translate
 from monsterDialog import Ui_monsterDialog
 from editDialog import Ui_monsterEdit
+from exportDialog import Ui_exportDialog
 from monster import Monster, Mob
 
 class StartQT4(QtGui.QMainWindow):
@@ -43,6 +44,8 @@ class StartQT4(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.encounter, QtCore.SIGNAL("cellChanged(int,int)"), self.get_rename)
         QtCore.QObject.connect(self.ui.actionSave, QtCore.SIGNAL("triggered()"), self.save_all)
         QtCore.QObject.connect(self.ui.actionLoad, QtCore.SIGNAL("triggered()"), self.load_all)
+        QtCore.QObject.connect(self.ui.actionExport, QtCore.SIGNAL("triggered()"), self.export_monster)
+        QtCore.QObject.connect(self.ui.actionImport, QtCore.SIGNAL("triggered()"), self.import_monster)
         self.ui.encounter.horizontalHeader().setMovable(True)
         self.ui.encounter.horizontalHeader().setResizeMode(3)
         self.ui.encounter.verticalHeader().setResizeMode(3)
@@ -64,24 +67,6 @@ class StartQT4(QtGui.QMainWindow):
         self.ui.statuses[12] = self.ui.unconBox
 
         self.resize_columns()
-
-        """
-        def get_func(a):
-            def func():
-                self.hide_statuses(a)
-            return func
-        
-        for num in range(0, len(self.statDict)-1):
-            self.ui.statusBox[num] = QtGui.QComboBox(self.ui.groupBox_2)
-            self.ui.statusBox[num].setObjectName("statusBox_%s" % (num))
-            for _,v in self.statDict.iteritems():
-                self.ui.statusBox[num].addItem(v)
-            self.ui.verticalLayout_2.insertWidget(num, self.ui.statusBox[num])
-            #QtCore.QObject.connect(self.ui.statusBox[num], QtCore.SIGNAL("currentIndexChanged(int)"), get_func(num))
-            if num > 0:
-                self.ui.statusBox[num].setVisible(False)
-            self.resize_columns()
-        """
         
 
     def add_mob(self):
@@ -93,7 +78,6 @@ class StartQT4(QtGui.QMainWindow):
         self.renameFlag = False
         currRow = self.ui.encounter.rowCount()
         self.ui.encounter.insertRow(currRow)
-        #print mobs[-1].__dict__ #for use in saving/loading, it's basic json shit.
         
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setItem(currRow, 0, item)
@@ -114,7 +98,6 @@ class StartQT4(QtGui.QMainWindow):
             self.ui.encounter.setItem(currRow, x + 3, item)
             item.setText(self.statDict[mobs[-1].statuses[x]])
             item.setFlags( QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled )
-            #self.ui.encounter.setColumnHidden(x+3, 1)
 
         item = QtGui.QTableWidgetItem()
         self.ui.encounter.setVerticalHeaderItem(currRow, item)
@@ -259,7 +242,6 @@ class StartQT4(QtGui.QMainWindow):
 
     def add_monster(self):
         dlg = StartMonsterDialog()
-        dlg.__init__()
         if dlg.exec_():
             newMonster = dlg.getValues()
             monsters.append(newMonster)
@@ -269,7 +251,6 @@ class StartQT4(QtGui.QMainWindow):
 
     def edit_monster(self):
         dlg = StartMonsterEdit()
-        dlg.__init__()
         dlg.ui.monsterSelect.setModel(self.ui.mobSelect.model())
         def edit_mon():
             x = dlg.ui.monsterSelect.currentIndex()
@@ -321,15 +302,6 @@ class StartQT4(QtGui.QMainWindow):
             write.write("%s\n" % str(self.ui.scratchPad.toPlainText()))
             write.close()
 
-    def save_mob(self):
-        fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save File', './', selectedFilter='*.txt')
-        if fileName:
-            write = open(fileName, "w")
-            write.write("%s\n" % (len(monsters)))
-            for x in monsters:
-                write.write("%s\n" % (x.__dict__))
-            write.close()
-
     def load_all(self):
         fileName = QtGui.QFileDialog.getOpenFileName(self, 'Load From File', './', selectedFilter='*.txt')
         if fileName:
@@ -339,18 +311,16 @@ class StartQT4(QtGui.QMainWindow):
             self.ui.mobSelect.clear()
             load = open(fileName, "r")
             monlen = int(load.readline())
-            #print monlen
             del monsters[:]
             for x in range(0, monlen):
                 monsters.append(Monster())
-                monsters[-1].__dict__ = ast.literal_eval(load.readline())
+                monsters[-1].__dict__ = literal_eval(load.readline())
                 self.ui.mobSelect.addItem(monsters[-1].name, None)
             moblen = int(load.readline())
-            #print moblen
             del mobs[:]
             for x in range(0, moblen):
                 mobs.append(Monster())
-                mobs[-1].__dict__ = ast.literal_eval(load.readline())
+                mobs[-1].__dict__ = literal_eval(load.readline())
                 self.populate_mob()
             lognum = int(load.readline())
             for x in range(0, lognum):
@@ -358,6 +328,29 @@ class StartQT4(QtGui.QMainWindow):
             self.ui.scratchPad.setPlainText(load.read()[:-1])
             load.close()
             self.resize_columns()
+
+    def export_monster(self):
+        dlg = StartMonsterExport(self.ui.mobSelect.model())
+        if dlg.exec_():
+            indices = dlg.getIndices()
+            fileName = QtGui.QFileDialog.getSaveFileName(self, 'Save File', './', selectedFilter='*.txt')
+            if fileName:
+                write = open(fileName, "w")
+                write.write("%s\n" % len(indices))
+                for x in range(0,len(indices)):
+                    write.write("%s\n" % (monsters[indices[x]].__dict__))
+                write.close()
+
+    def import_monster(self):
+        fileName = QtGui.QFileDialog.getOpenFileName(self, 'Load From File', './', selectedFilter='*.txt')
+        if fileName:
+            load = open(fileName, "r")
+            monlen = int(load.readline())
+            for x in range(0, monlen):
+                monsters.append(Monster())
+                monsters[-1].__dict__ = literal_eval(load.readline())
+                monsters[-1].number = 0
+                self.ui.mobSelect.addItem(monsters[-1].name, None)
 
     def resize_columns(self):
         a = 3
@@ -401,18 +394,37 @@ class StartMonsterEdit(QtGui.QDialog):
             str(self.ui.descriptionBox.toPlainText()))
         return x
 
+class StartMonsterExport(QtGui.QDialog):
+    def __init__(self, model):
+        super(StartMonsterExport, self).__init__()
+        self.ui = Ui_exportDialog()
+        self.ui.setupUi(self)
+        self.ui.applyButton = self.ui.buttonBox.button(QtGui.QDialogButtonBox.Apply)
+        for x in range(0, model.rowCount()):
+            model.item(x).setCheckState(QtCore.Qt.Unchecked)
+            model.item(x).setCheckable(True)
+        self.ui.listView.setModel(model)
+
+    def getIndices(self):
+        model = self.ui.listView.model()
+        indices = []
+        for x in range(0, model.rowCount()):
+            if(model.item(x).checkState()):
+                indices.append(x)
+        return indices
+        
         
 
 if __name__ == "__main__":
     monsters = []
     mobs = []
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication(argv)
     myapp = StartQT4()
     myapp.show()
 
 
-    sys.exit(app.exec_())
+    exit(app.exec_())
 
 
     
