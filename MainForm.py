@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'DnDForm.ui'
 #
-# Created: Mon Apr  6 18:53:09 2015
+# Created: Mon Apr 20 19:39:50 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,8 +48,9 @@ class Ui_MainWindow(object):
         self.verticalLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setSpacing(-1)
+        self.horizontalLayout.setSpacing(6)
         self.horizontalLayout.setSizeConstraint(QtGui.QLayout.SetMaximumSize)
+        self.horizontalLayout.setContentsMargins(5, -1, 5, -1)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.createMonsterButton = QtGui.QToolButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
@@ -139,6 +140,7 @@ class Ui_MainWindow(object):
         self.encounter.verticalHeader().setMinimumSectionSize(10)
         self.verticalLayout.addWidget(self.encounter)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6.setContentsMargins(5, -1, 5, -1)
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
         self.deleteButton = QtGui.QPushButton(self.centralwidget)
         self.deleteButton.setObjectName(_fromUtf8("deleteButton"))
@@ -157,8 +159,8 @@ class Ui_MainWindow(object):
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.gridLayout_2 = QtGui.QGridLayout(self.groupBox)
-        self.gridLayout_2.setContentsMargins(0, 9, 0, 0)
-        self.gridLayout_2.setVerticalSpacing(5)
+        self.gridLayout_2.setContentsMargins(5, 9, 5, 0)
+        self.gridLayout_2.setVerticalSpacing(2)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.hitValue = QtGui.QSpinBox(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
@@ -226,8 +228,8 @@ class Ui_MainWindow(object):
         self.groupBox_2.setSizePolicy(sizePolicy)
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
         self.gridLayout = QtGui.QGridLayout(self.groupBox_2)
-        self.gridLayout.setContentsMargins(0, 9, 0, 0)
-        self.gridLayout.setVerticalSpacing(5)
+        self.gridLayout.setContentsMargins(5, 9, 5, 0)
+        self.gridLayout.setVerticalSpacing(2)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.incapBox = QtGui.QCheckBox(self.groupBox_2)
         self.incapBox.setObjectName(_fromUtf8("incapBox"))
@@ -342,7 +344,7 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
         self.menuBar = QtGui.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 720, 22))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 720, 21))
         self.menuBar.setObjectName(_fromUtf8("menuBar"))
         self.menuFile = QtGui.QMenu(self.menuBar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -442,10 +444,10 @@ class Ui_MainWindow(object):
         self.mobInfo.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'.Helvetica Neue DeskInterface\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Select a mob from the table to see information here. </p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">If you select multiple mobs, they must be the same type.</p></body></html>", None))
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'.Helvetica Neue DeskInterface\'; font-size:13pt;\">Select a mob from the table to see information here. </span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'.Helvetica Neue DeskInterface\'; font-size:13pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'.Helvetica Neue DeskInterface\'; font-size:13pt;\">If you select multiple mobs, they must be the same type.</span></p></body></html>", None))
         self.groupBox_3.setTitle(_translate("MainWindow", "Scratch Pad", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuMonsters.setTitle(_translate("MainWindow", "Monsters", None))
