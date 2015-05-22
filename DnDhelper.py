@@ -153,10 +153,12 @@ class StartQT4(QtGui.QMainWindow):
             else:
                 self.ui.battleLog.insertItem(0, "%s took %s damage!" % (s, hitnum))
             names = []
+            offset = 0 #fixes offset for when a mob is deleted.
             for x in range(0, len(death)): 
                 if death[x] == 1:
-                    names.append(mobs[x].name)
-                    self.delete_mob(x)
+                    names.append(mobs[x-offset].name)
+                    self.delete_mob(x-offset)
+                    offset += 1;
             if len(names) > 0:
                 s = ', '.join(names)
                 self.ui.battleLog.insertItem(0, "%s died!" % (s))
