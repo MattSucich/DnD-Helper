@@ -25,9 +25,9 @@ class Monster(object):
 		a = 0 # rolling health
 		for x in range(0,self.dicenum):
 			try:
-				a = a + random.randrange(1,self.dicesize)
+				a = a + random.randrange(1,self.dicesize + 1)
 			except:
-				a = a + 1;
+				a = a + 0;
 		return Mob(self.name, a+self.hpmod, self.number, parent)
 
 class Mob(object):
