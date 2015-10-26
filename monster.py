@@ -12,6 +12,7 @@ class Monster(object):
 		self.hpmod = hpmod
 		self.desc = desc
 		self.number = 0
+		print 123;
 
 	def edit(self, name = "Undefined", dicenum = 1, dicesize = 1, hpmod = 1, desc = " "):
 		self.name = name
@@ -19,6 +20,7 @@ class Monster(object):
 		self.dicesize = dicesize
 		self.hpmod = hpmod
 		self.desc = desc
+
 
 	def addMob(self, parent):
 		self.number += 1
