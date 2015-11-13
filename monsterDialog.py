@@ -43,6 +43,7 @@ class Ui_monsterDialog(object):
         self.numDice = QtGui.QLineEdit(monsterDialog)
         self.numDice.setBaseSize(QtCore.QSize(12, 0))
         self.numDice.setObjectName(_fromUtf8("numDice"))
+        QtCore.QObject.connect(self.numDice, QtCore.SIGNAL("editingFinished()"), self.diceNumCheck)
         self.horizontalLayout.addWidget(self.numDice)
         self.label_4 = QtGui.QLabel(monsterDialog)
         self.label_4.setObjectName(_fromUtf8("label_4"))
@@ -50,12 +51,14 @@ class Ui_monsterDialog(object):
         self.dieSize = QtGui.QLineEdit(monsterDialog)
         self.dieSize.setBaseSize(QtCore.QSize(12, 0))
         self.dieSize.setObjectName(_fromUtf8("dieSize"))
+        QtCore.QObject.connect(self.dieSize, QtCore.SIGNAL("editingFinished()"), self.dieSizeCheck)
         self.horizontalLayout.addWidget(self.dieSize)
         self.label_5 = QtGui.QLabel(monsterDialog)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.horizontalLayout.addWidget(self.label_5)
         self.hitDiceMod = QtGui.QLineEdit(monsterDialog)
         self.hitDiceMod.setObjectName(_fromUtf8("hitDiceMod"))
+        QtCore.QObject.connect(self.hitDiceMod, QtCore.SIGNAL("editingFinished()"), self.diceModCheck)
         self.horizontalLayout.addWidget(self.hitDiceMod)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.label = QtGui.QLabel(monsterDialog)
@@ -74,6 +77,9 @@ class Ui_monsterDialog(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), monsterDialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), monsterDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(monsterDialog)
+        self.numDice.setText("0")
+        self.dieSize.setText("0")
+        self.hitDiceMod.setText("0")
 
     def retranslateUi(self, monsterDialog):
         monsterDialog.setWindowTitle(_translate("monsterDialog", "New Monster", None))
@@ -83,3 +89,23 @@ class Ui_monsterDialog(object):
         self.label_5.setText(_translate("monsterDialog", "+", None))
         self.label.setText(_translate("monsterDialog", "Description", None))
 
+    def diceNumCheck(self):
+        x = self.numDice.text()
+        try:
+            int(x)
+        except Exception, e:
+            self.numDice.setText("0")
+
+    def dieSizeCheck(self):
+        x = self.dieSize.text()
+        try:
+            int(x)
+        except Exception, e:
+            self.dieSize.setText("0")
+
+    def diceModCheck(self):
+        x = self.hitDiceMod.text()
+        try:
+            int(x)
+        except Exception, e:
+            self.hitDiceMod.setText("1")
